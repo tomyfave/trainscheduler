@@ -9,12 +9,18 @@ var config = {
   };
   firebase.initializeApp(config);
 
+
   // Reference names collection
   var messagesRef = firebase.database().ref('messages');
   let tablePos = 0;
 function setup() {
     retrieveMessage();
 }
+
+var nowTime = moment().format('dddd, MMMM Do YYYY, hh:mm:ss a');
+
+console.log(nowTime);
+
 //listen for form submit
 
 document.getElementById('contactForm').addEventListener('submit', submitForm);
@@ -22,6 +28,8 @@ document.getElementById('contactForm').addEventListener('submit', submitForm);
 // Submit form
 function submitForm(e){
     e.preventDefault();
+
+
 
     // Get values
     var name = getInputVal('name');
@@ -73,19 +81,44 @@ function appendsMessage(dbMessage){
     let tableRow = $("<tr>")
 
     // give the table row an attribute
-    tableRow.attr('id', tablePos);
+    //tableRow.attr('id', tablePos);
 
-    $("#table").append(tableRow);
+    
 
     //give the table position an id 
-    tableRowIdString = "#" + tablePos;
+    //tableRowIdString = "#" + tablePos;
+
+    //working with our trains first arrival "2:30" hh:mm
+    //work on train frequency
+    //Train departure 13:00 frequency is every 45mins. Time now is 17:00
+    //How many 45 min intervals have passed since 13:00 until 17:00
+    //17:00 subtracted by 13:00 is 240mins. 240mins modulus 45 is 15 and 15 is the minutes since our last train departed.
+    //Frequency first frequency45-(diff240mod frequency45)=30 for this example
+
+    var time= "13:00";// This is my first train arrival time
+    var time2= "17:00";//This is going to be time now. 
+    var frequency= 45;
+    //Me turning these strings into workable objects 
+    var timeObject= moment(time, 'hh:mm');
+    var timeObject2= moment(time2, 'hh:mm');
+    var difference= timeObject2.diff(timeObject,"minutes");//how many minutes has passed since the first train arrival until now
+
+    console.log(timeObject, timeObject2, difference);
+
+
 
     // append and pull dbMessages into slots
-    $(tableRowIdString).append("<td>" + dbMessage.name + "</td>")
-    $(tableRowIdString).append("<td>" + dbMessage.destination + "</td>")
-    $(tableRowIdString).append("<td>" + dbMessage.first + "</td>")
-    $(tableRowIdString).append("<td>" + dbMessage.frequency + "</td>")
-    $(tableRowIdString).append("<td> 5 </td>")
-    //add another table postion 
+    tableRow.append("<td>" + dbMessage.name + "</td>")
+    tableRow.append("<td>" + dbMessage.destination + "</td>")
+    tableRow.append("<td>" + dbMessage.frequency + "</td>")
+    tableRow.append("<td>" + dbMessage.first + "</td>")
+    tableRow.append("<td> 5 </td>")
+    //add another table postion
+    $("#table").append(tableRow); 
     tablePos++
 }
+
+
+
+
+
